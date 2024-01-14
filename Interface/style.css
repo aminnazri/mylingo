@@ -96,11 +96,13 @@ body{
 .sign-in{
     left: 0;
     width: 50%;
+    opacity: 1;
     z-index: 2;
 }
 
 .container.active .sign-in{
     transform: translateX(100%);
+    opacity: 0;
 }
 
 .sign-up{
@@ -142,6 +144,20 @@ body{
     width: 40px;
     height: 40px;
 }
+.form-container{
+    position: absolute;
+    /* top: 0; */
+    left: 0%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    padding:  50px ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .toggle-container{
     position: absolute;

@@ -1,67 +1,119 @@
-const container = document.getElementById('container');
-const registerBtn = document.getElementById('register');
-const loginBtn = document.getElementById('login');
-const signUpForm = document.getElementById('sign-up-form');
-const signInForm = document.getElementById('sign-in-form');
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
-registerBtn.addEventListener('click', () => {
-    container.classList.add("active");
+const firebaseConfig = {
+    apiKey: "AIzaSyA-ZeMkz3MbPeYq1shszk17lzu0wxXvr0I",
+    authDomain: "mylingo-79006.firebaseapp.com",
+    projectId: "mylingo-79006",
+    storageBucket: "mylingo-79006.appspot.com",
+    messagingSenderId: "1021266941082",
+    appId: "1:1021266941082:web:03180967f3c80cff823b23",
+    measurementId: "G-4LSR5ZLJ28"
+  };
+
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+console.log(auth);
+
+const submitButton = document.getElementById("submit");
+const signupButton = document.getElementById("sign-up");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const main = document.getElementById("main");
+const createacct = document.getElementById("create-acct")
+
+const signupEmailIn = document.getElementById("email-signup");
+const confirmSignupEmailIn = document.getElementById("confirm-email-signup");
+const signupPasswordIn = document.getElementById("password-signup");
+const confirmSignUpPasswordIn = document.getElementById("confirm-password-signup");
+const createacctbtn = document.getElementById("create-acct-btn");
+
+// const signinEmail = document.getElementById("email-signin");
+// const signinpassword = document.getElementById("password-signin");
+
+// const returnBtn = document.getElementById("return-btn");
+
+var email, password, signupEmail, signupPassword, confirmSignupEmail, confirmSignUpPassword;
+
+createacctbtn.addEventListener("click", function() {
+  var isVerified = true;
+
+  signupEmail = signupEmailIn.value;
+  confirmSignupEmail = confirmSignupEmailIn.value;
+  if(signupEmail != confirmSignupEmail) {
+      window.alert("Email fields do not match. Try again.")
+      isVerified = false;
+  }
+
+  signupPassword = signupPasswordIn.value;
+  confirmSignUpPassword = confirmSignUpPasswordIn.value;
+  if(signupPassword != confirmSignUpPassword) {
+      window.alert("Password fields do not match. Try again.")
+      isVerified = false;
+  }
+  
+  if(signupEmail == null || confirmSignupEmail == null || signupPassword == null || confirmSignUpPassword == null) {
+    window.alert("Please fill out all required fields.");
+    isVerified = false;
+  }
+//   if(signinEmail == null || signinpassword == null ) {
+//     window.alert("Please fill out all required fields.");
+//     isVerified = false;
+//   }
+  
+  if(isVerified) {
+    createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
+      .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      // ...
+      console.log(user);
+      window.alert("Success! Account created. Please login to your account");
+      window.location.href="signlogin.html";
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+      window.alert(errorMessage);
+    //   window.alert("Error occurred. Try again.");
+    });
+  }
 });
 
-loginBtn.addEventListener('click', () => {
-    container.classList.remove("active");
+submitButton.addEventListener("click", function() {
+  email = emailInput.value;
+  console.log(email);
+  password = passwordInput.value;
+  console.log(password);
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      console.log("Success! Welcome back!");
+      window.location.href="home.html";
+    //   window.alert("Success! Welcome back!");
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log( errorMessage);
+      window.alert(errorMessage);
+      console.log("Error occurred. Try again.");
+    });
 });
 
-const submitData = document.getElementById('submitData');
-submitData.addEventListener('click', (e) => {
-    e.preventDefault();
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-
-    if (container.classList.contains('active')) {
-        // Sign Up
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                set(ref(database, 'users/' + user.uid), {
-                    email: email,
-                    password: password
-                })
-                    .then(() => {
-                        alert('User created successfully');
-                    })
-                    .catch((error) => {
-                        alert(error);
-                    });
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                alert(errorMessage);
-            });
-    } else {
-        // Sign In
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-
-                var lgDate = new Date();
-                update(ref(database, 'users/' + user.uid), {
-                    last_login: lgDate,
-                })
-                    .then(() => {
-                        alert('User logged in successfully');
-                    })
-                    .catch((error) => {
-                        alert(error);
-                    });
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                alert(errorMessage);
-            });
-    }
+signupButton.addEventListener("click", function() {
+    main.style.display = "none";
+    createacct.style.display = "block";
 });
 
-// ...
+returnBtn.addEventListener("click", function() {
+    main.style.display = "block";
+    createacct.style.display = "none";
+});
